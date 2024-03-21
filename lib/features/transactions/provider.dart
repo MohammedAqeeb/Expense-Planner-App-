@@ -12,6 +12,6 @@ final transactionSortedManager =
   return manager;
 });
 
-final transactionSortingServicePr = ChangeNotifierProvider(
+final transactionSortingServicePr = ChangeNotifierProvider.autoDispose(
   (ref) => TransactionSortingService(),
 );

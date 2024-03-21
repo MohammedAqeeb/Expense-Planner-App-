@@ -15,12 +15,12 @@ class TransactionSortingPreviewList extends ConsumerWidget {
       child: Container(),
     );
 
-    if (service.loading) {
+    if (service.loading == true) {
       returnWidget = _buildLoading(context);
-    } else if (service.recentexpenseDocList.isEmpty) {
+    } else if (service.expenseDocList.isEmpty) {
       returnWidget = _buildNoDocs(context);
     } else {
-      returnWidget = _buildList(context, service.recentexpenseDocList);
+      returnWidget = _buildList(context, service.expenseDocList);
     }
     return returnWidget;
   }

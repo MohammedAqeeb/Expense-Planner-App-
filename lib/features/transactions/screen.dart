@@ -18,14 +18,18 @@ class TransactionScreen extends ConsumerStatefulWidget {
 class TransactionScreenState extends ConsumerState<TransactionScreen> {
   final ScrollController _scrollController = ScrollController();
 
-  final TransactionSortedManager manager = TransactionSortedManager();
+  late TransactionSortedManager manager;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      TransactionSortingLogic.getExpenseList(manager, ref);
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await _executeSearch();
     });
+  }
+
+  Future<void> _executeSearch() async {
+    return await TransactionSortingLogic.getExpenseList(manager, ref);
   }
 
   @override
@@ -39,7 +43,9 @@ class TransactionScreenState extends ConsumerState<TransactionScreen> {
 
   @override
   Widget build(BuildContext context) {
+    manager = ref.watch(transactionSortedManager);
     ref.watch(transactionSortingServicePr);
+
     return Scaffold(
       body: RefreshIndicator(
         child: buildStickyHeader(),
@@ -96,14 +102,8 @@ class TransactionScreenState extends ConsumerState<TransactionScreen> {
                   const Spacer(),
                   IconButton(
                     onPressed: () async {
-                      await TransactionSortingLogic.selectDate(
-                        context,
-                        manager,
-                      );
-                      await TransactionSortingLogic.getExpenseList(
-                        manager,
-                        ref,
-                      );
+                      await _selectDate(context);
+                      _executeSearch();
                     },
                     icon: const Icon(Icons.calendar_today),
                   )
@@ -115,5 +115,16 @@ class TransactionScreenState extends ConsumerState<TransactionScreen> {
         return Container();
       },
     );
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+        context: context,
+        initialDate: manager.getAddedBefore(),
+        firstDate: DateTime(2019, 11, 01),
+        lastDate: DateTime.now());
+    if (picked != null && picked != manager.getAddedBefore()) {
+      manager.setAddedBefore(picked);
+    }
   }
 }

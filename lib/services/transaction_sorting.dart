@@ -7,7 +7,7 @@ class TransactionSortingService with ChangeNotifier {
   late Query _query;
   int perPage = 10;
   late DocumentSnapshot _lastDocument;
-  List<TransactionExpense> recentexpenseDocList = [];
+  List<TransactionExpense> expenseDocList = [];
   bool gettingMore = false;
   bool moreAvailable = true;
   bool loading = true;
@@ -17,17 +17,23 @@ class TransactionSortingService with ChangeNotifier {
   Future<void> getRecentexpenseList({
     required DateTime addedBefore,
   }) async {
-    // Resetting all values
+    print('Service called');
+    print(addedBefore);
 
-    recentexpenseDocList.clear();
+    // Resetting all values
+    // print(addedBefore.add(const Duration(hours: 24)));
+
+    expenseDocList.clear();
     gettingMore = false;
     moreAvailable = true;
     loading = true;
     notifyListeners();
 
-    _query = getSearchQuery(
-      addedBefore: addedBefore.add(const Duration(hours: 24)),
-    );
+    _query = _db
+        .collection('expense')
+        .orderBy('addedOn', descending: false)
+        .where('addedOn', isLessThanOrEqualTo: addedBefore)
+        .limit(perPage);
 
     // Getting documents from query
     await _query.get().then((querySnapshot) {
@@ -36,18 +42,6 @@ class TransactionSortingService with ChangeNotifier {
 
     loading = false;
     notifyListeners();
-  }
-
-  Query getSearchQuery({
-    required DateTime addedBefore,
-  }) {
-    Query returnQuery;
-    returnQuery = _db
-        .collection('expense')
-        .orderBy('addedOn', descending: false)
-        // .where('addedOn', isLessThanOrEqualTo: addedBefore)
-        .limit(perPage);
-    return returnQuery;
   }
 
   Future<void> repeatGetList() async {
@@ -76,7 +70,7 @@ class TransactionSortingService with ChangeNotifier {
         moreAvailable = false;
       }
       for (var document in documents) {
-        recentexpenseDocList.add(
+        expenseDocList.add(
           TransactionExpense.fromJson(
             document.data() as Map<String, dynamic>,
           ),

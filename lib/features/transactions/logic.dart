@@ -14,6 +14,7 @@ class TransactionSortingLogic {
     TransactionSortedManager manager,
     WidgetRef ref,
   ) async {
+    print('logic called');
     final transServicePr = ref.read(transactionSortingServicePr);
 
     await transServicePr.getRecentexpenseList(
@@ -22,14 +23,13 @@ class TransactionSortingLogic {
   }
 
   /// Function to get repeated list
-  /// 
+  ///
   static Future<void> repeatGetList(
     WidgetRef ref,
   ) async {
     final transServicePr = ref.read(transactionSortingServicePr);
     await transServicePr.repeatGetList();
   }
-
 
   /// Function to scroll list of dishes
   ///
@@ -46,21 +46,5 @@ class TransactionSortingLogic {
         }
       },
     );
-  }
-
-  // Function to obtain the date from the users
-  ///
-  static Future selectDate(
-    BuildContext context,
-    TransactionSortedManager manager,
-  ) async {
-    final DateTime? picked = await showDatePicker(
-        context: context,
-        initialDate: manager.getAddedBefore(),
-        firstDate: DateTime(2019, 11, 01),
-        lastDate: DateTime.now());
-    if (picked != null && picked != manager.getAddedBefore()) {
-      manager.setAddedBefore(picked);
-    }
   }
 }

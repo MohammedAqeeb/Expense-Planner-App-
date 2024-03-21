@@ -32,7 +32,7 @@ class TransactionSortingService with ChangeNotifier {
     _query = _db
         .collection('expense')
         .orderBy('addedOn', descending: false)
-        .where('addedOn', isLessThanOrEqualTo: addedBefore)
+        // .where('addedOn', isLessThanOrEqualTo: addedBefore)
         .limit(perPage);
 
     // Getting documents from query

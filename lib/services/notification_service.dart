@@ -99,7 +99,7 @@ class NotificationService {
       actionButtons: actionButtons,
       schedule: scheduled
           ? NotificationCalendar(
-              second: 50,
+              hour: 1,
               timeZone: localTimeZone,
               repeats: true,
             )

@@ -20,9 +20,6 @@ class TransactionSortingService with ChangeNotifier {
     print('Service called');
     print(addedBefore);
 
-    // Resetting all values
-    // print(addedBefore.add(const Duration(hours: 24)));
-
     expenseDocList.clear();
     gettingMore = false;
     moreAvailable = true;
@@ -32,7 +29,7 @@ class TransactionSortingService with ChangeNotifier {
     _query = _db
         .collection('expense')
         .orderBy('addedOn', descending: false)
-        // .where('addedOn', isLessThanOrEqualTo: addedBefore)
+        .where('addedOn', isLessThanOrEqualTo: addedBefore)
         .limit(perPage);
 
     // Getting documents from query
